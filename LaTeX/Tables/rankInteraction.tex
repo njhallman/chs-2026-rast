@@ -1,0 +1,38 @@
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{2}{D{.}{.}{-1}}}
+\toprule
+                    &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}\\
+                    &\multicolumn{1}{c}{\shortstack{DV = Retained}}&\multicolumn{1}{c}{\shortstack{DV = Promoted}}\\
+\midrule
+\FEMALE\ $\times$ Post Form AP $\times$ Staff   &       0.022\sym{***}&       0.023\sym{***}\\
+                    &     (0.003)         &     (0.004)         \\
+\FEMALE\ $\times$ Post Form AP $\times$ Senior  &       0.027\sym{***}&       0.014\sym{***}\\
+                    &     (0.006)         &     (0.005)         \\
+\FEMALE\ $\times$ Post Form AP $\times$ Manager+ &       0.032\sym{***}&       0.005         \\
+                    &     (0.010)         &     (0.008)         \\
+\FEMALE\ $\times$ Staff        &      -0.009\sym{***}&      -0.011\sym{***}\\
+                    &     (0.002)         &     (0.002)         \\
+\FEMALE\ $\times$ Senior       &      -0.007         &      -0.005         \\
+                    &     (0.005)         &     (0.004)         \\
+\FEMALE\ $\times$ Manager+      &      -0.021\sym{**} &      -0.010         \\
+                    &     (0.010)         &     (0.007)         \\
+Constant            &       0.840\sym{***}&       0.196\sym{***}\\
+                    &     (0.004)         &     (0.003)         \\
+\midrule
+\multicolumn{3}{l}{\textit{Post-period net female gap (sum of 3-way + 2-way):}}\\[4pt]
+\quad Staff         &      0.014\sym{***}&      0.012\sym{***}\\
+                    &     (0.003)         &     (0.003)         \\
+\quad Senior         &      0.019\sym{***}&      0.009\sym{***}\\
+                    &     (0.004)         &     (0.003)         \\
+\quad Manager+         &      0.011\sym{*}&      -0.004         \\
+                    &     (0.006)         &     (0.004)         \\
+\midrule
+Observations        &     297,537         &     239,740         \\
+Unique employees    &      72,774         &      71,040         \\
+Adjusted R-squared  &       0.036         &       0.054         \\
+Controls            &         Yes         &         Yes         \\
+Fixed effects       &       C,Y,E         &       C,Y,E         \\
+\bottomrule
+\end{tabular}
+}

@@ -1,0 +1,33 @@
+__pycache__/
+*.pyc
+.DS_Store
+*.log
+.venv/
+
+# Data: licensed inputs and derived panels are NOT redistributable and are not
+# committed. Only Analysis/Data/public/ (non-proprietary inputs) is tracked.
+# See DATA_AVAILABILITY.md.
+Analysis/Data/*
+!Analysis/Data/public/
+Analysis/Data/public/**/*.tmp
+
+# LaTeX build artifacts
+LaTeX/**/*.aux
+LaTeX/**/*.bbl
+LaTeX/**/*.bcf
+LaTeX/**/*.blg
+LaTeX/**/*.out
+LaTeX/**/*.run.xml
+LaTeX/**/*.synctex.gz
+LaTeX/**/*.fdb_latexmk
+LaTeX/**/*.fls
+LaTeX/**/*.toc
+LaTeX/**/*.lof
+LaTeX/**/*.lot
+LaTeX/manuscript.pdf
+
+# verify_outputs.py difference images
+diffs/
+
+# Diagnostic (non-paper) outputs
+diagnostics/
