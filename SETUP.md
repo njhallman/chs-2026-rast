@@ -85,6 +85,21 @@ conda run -n chs pip install stata_setup
 conda run -n chs python Analysis/run_all.py
 ```
 
+### `06_build_interim.py` is killed with exit code 137
+
+Exit 137 is the OOM killer. The Big 4 phase is modest, but the
+other-financial-services phase concatenates all 54 per-role Revelio position
+files into a single frame of roughly nine million rows and then filters it, which
+needs **more than 16 GB of RAM** even after the memory reductions applied here
+(reading only the surviving columns, narrowing the education file, and releasing
+the position frame before education loads).
+
+If you hit this, either run that phase on a machine with more memory (32 GB is
+comfortable), or skip it: the other-financial-services panel feeds only
+`topCompanies.tex`, `benchmarkBB5IB.png` and `benchmarkOFS.png`. Everything else
+-- Tables 1 through 7 and the other five figures -- depends solely on the Big 4
+panel, which builds within a few GB and is written before the heavy phase begins.
+
 ### `geopandas` import failures
 
 `retention_gap_map.py` is the only script that needs it. On a system without GDAL, install from
