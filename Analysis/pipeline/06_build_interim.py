@@ -116,13 +116,18 @@ def load_education(user_ids=None, source='combined'):
     """
     print(f"\nLoading education data (source={source})...")
 
+    # Only these four columns are used below; the rest (field,
+    # university_location, university_country, ...) are wide text columns that
+    # would otherwise be loaded and discarded.
+    EDU_COLUMNS = ['user_id', 'university_name', 'enddate', 'degree']
+
     if source == 'b4':
         path = os.path.join(RAW_DIR, 'revelioB4Edu.feather')
-        edu = pd.read_feather(path)
+        edu = pd.read_feather(path, columns=EDU_COLUMNS)
         print(f"  Loaded revelioB4Edu.feather: {len(edu):,} rows")
     else:
         combined_path = os.path.join(RAW_DIR, 'revelioEdu_role_combined.feather')
-        edu = pd.read_feather(combined_path)
+        edu = pd.read_feather(combined_path, columns=EDU_COLUMNS)
         print(f"  Loaded revelioEdu_role_combined.feather: {len(edu):,} rows")
 
     if user_ids is not None:
@@ -344,8 +349,15 @@ def build_other_fs(revFs, edu):
     # Drop unnecessary columns
     ofs.drop(columns=[c for c in DROP_COLUMNS if c in ofs.columns], inplace=True, errors='ignore')
 
-    # Merge education data
-    ofs = ofs.merge(edu, on='user_id', how='left')
+    # Attach education by lookup rather than ofs.merge(edu, how='left'). load_education()
+    # returns exactly one row per user_id, so a left merge and a map give identical
+    # values, order and column placement -- but the merge builds a second full copy of
+    # a multi-million-row frame, which is enough to exhaust a 16 GB machine.
+    edu_idx = edu.set_index('user_id')
+    for col in [c for c in edu.columns if c != 'user_id']:
+        ofs[col] = ofs['user_id'].map(edu_idx[col])
+    del edu_idx
+    gc.collect()
 
     print(f"  Final: {ofs['user_id'].nunique():,} workers, {len(ofs):,} positions")
     return ofs
