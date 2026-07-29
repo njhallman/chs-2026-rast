@@ -30,13 +30,19 @@ Pass `--wrds-username`, or set `WRDS_USERNAME`. There is no default.
 
 ### A note on the Revelio vintage
 
-The published results were produced from the January 2025 Revelio bulk extract (145,573 users;
-713,614 person-years). Revelio revises its underlying profile data over time — job histories are
-re-parsed, and profiles are added — so a fresh extract will not reproduce the published tables
-exactly. `06_build_interim.py` prefers the bulk partition files
-(`revelioFsPosUsr_{1-4}_of_4.feather`) for this reason and falls back to per-role files only if
-they are absent. Anyone attempting an exact numerical reproduction should request the January
-2025 vintage; a current extract will reproduce the patterns but not the digits.
+The published results come from the January 2025 Revelio extract. That extract yields a primary
+sample of **150,114 auditors and 743,878 auditor-years**, and **72,775 auditors / 297,542
+auditor-years** for the rank and promotion analyses — the figures in Table 1 and in the
+`summaryStats` header, and a useful check that you are working from the right data.
+
+Revelio revises its underlying profile data continuously: employment histories are re-parsed and
+new profiles are added. A fresh extract will therefore differ from the January 2025 one, and
+coefficients and sample counts will shift accordingly. Anyone attempting an exact numerical
+reproduction should request the January 2025 vintage.
+
+`06_build_interim.py` reads `revelioB4Aud.feather` plus `revelioB4Edu.feather` for the Big 4
+panel, and the per-role position files plus `revelioEdu_role_combined.feather` for the other
+financial services panel. See `Analysis/pipeline/README.md` for the exact expected file set.
 
 ## 2. Public data — downloaded by the pipeline
 
@@ -54,40 +60,36 @@ These live in `Analysis/Data/public/` and are either public-domain or small hand
 
 | File | What it is |
 | --- | --- |
-| `census/zip_cbsa.csv` | ZIP5 → CBSA crosswalk, built by `04_download_census.py` from Census and OMB files. Public domain. |
-| `census/cbsa_revelio_metro.csv` | CBSA code → Revelio `metro_area` mapping, hand-reviewed by the authors. Not regenerable by any script. |
+| `raw/census/zip_cbsa.csv` | ZIP5 → CBSA crosswalk, built by `04_download_census.py` from Census and OMB files. Public domain. |
+| `raw/census/cbsa_revelio_metro.csv` | CBSA code → Revelio `metro_area` mapping, hand-reviewed by the authors. Not regenerable by any script. |
 | `interim/at_revelio_firm_mapping.json` | *Accounting Today* Top 100 firm → Revelio `company_raw` mapping, with PCAOB annual-inspection status. Hand-curated by the authors. |
-| `proxy/proxy_dei_keywords_v2.csv` | DEI and gender keyword counts per DEF 14A filing, computed by `08_fetch_proxy_keywords.py` from public SEC filings. |
-| `edgar/company_locations.csv` | Registrant business city, state, and ZIP by CIK, from the SEC submissions API. Public domain. See the caveat below. |
+| `proxy statements/proxy_dei_keywords_v2.csv` | DEI and gender keyword counts per DEF 14A filing, computed by `08_fetch_proxy_keywords.py` from public SEC filings. |
+| `edgar/company_locations.csv` | Registrant business city, state, and ZIP by CIK, from the SEC submissions API. Public domain. Rebuildable with `tools/build_company_locations.py`. |
 | `geo/us-states.json` | US state boundaries (Census TIGER, public domain), used by the retention-gap map. Vendored here because the figure script previously fetched it from an unpinned GitHub URL at run time, which made the figure depend on a third-party file that could change without notice. |
 
-The last two exist so that no reproducer needs the authors' local mirror of SEC filings.
-`08_fetch_proxy_keywords.py` documents how the keyword counts were produced and requires
-`--edgar-archive` pointing at such a mirror; you do not need to run it.
+The proxy keyword counts and the company locations are committed so that no reproducer needs a
+local mirror of SEC filings. `08_fetch_proxy_keywords.py` documents how the keyword counts were
+produced and requires `--edgar-archive` pointing at such a mirror; you do not need to run it.
 
 **IPEDS is deliberately not committed.** The Completions files are public domain but total
 ~900 MB. `Analysis/pipeline/05_download_ipeds.py` fetches them straight from NCES with no
 authentication, into `Analysis/Data/raw/ipeds/`. Run it before `supply_vs_entry.py`.
 
-### Caveat on `edgar/company_locations.csv`
+### On `edgar/company_locations.csv`
 
 This file maps each Big 4 audit client CIK to a business address, which is how `07` assigns
-clients to CBSAs for the Table 4 mechanism measures. It is built by
+clients to CBSAs for the mechanism measures. It is built by
 `tools/build_company_locations.py` from the SEC submissions API
-(`https://data.sec.gov/submissions/CIK##########.json`), which reports each filer's **current**
-address rather than its address in the filing year. Companies that have relocated are therefore
-assigned to their present CBSA.
-
-The published measure was built from a point-in-time EDGAR snapshot. Table 4 rebuilt from this
-file may therefore differ slightly from the published version. For an exact reproduction, use a
-point-in-time archive instead:
+(`https://data.sec.gov/submissions/CIK##########.json`), which needs no credentials — so it can
+be rebuilt or extended by anyone:
 
 ```bash
-python tools/fetch_public_inputs.py --extract-locations /path/to/edgar.db
+python tools/build_company_locations.py
 ```
 
-The committed file is the SEC-sourced one, so that the package is reproducible by anyone without
-access to a private archive.
+The API reports each filer's current business address, so the file reflects addresses as of when
+it was built. Like every other input here, rebuilding it at a different time gives slightly
+different results; see the note on exact numbers in the README.
 
 Big 4 firm identification is not a data file — the `company_raw` → firm mapping lives in
 `Analysis/shared/firm_mappings.py`, and the appendix table listing it is generated from that

@@ -22,6 +22,21 @@ plus the manuscript source. It does *not* contain the licensed employment and au
 the analysis runs on — see [DATA_AVAILABILITY.md](DATA_AVAILABILITY.md) for what those inputs
 are and how to obtain them.
 
+## A note on exact numbers
+
+Most of the input data is licensed from commercial vendors and cannot be redistributed, so this
+package ships the code rather than the data. You supply the inputs, which means the numbers you
+get depend on the data you have.
+
+Expect small differences. The vendors revise their data over time — Revelio re-parses employment
+histories and adds profiles, and filing-based sources are updated as companies change — so an
+extract pulled today will not match one pulled in January 2025 observation for observation.
+Coefficients and sample counts will therefore shift slightly, and a marginal significance level
+can move a star. The patterns the paper documents are robust to this; individual digits are not.
+
+If you need to match the published tables exactly, you need the same data vintage the paper used
+(see [DATA_AVAILABILITY.md](DATA_AVAILABILITY.md)).
+
 ## Layout
 
 ```

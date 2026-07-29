@@ -23,9 +23,6 @@ is invisible to the scripts. That failure is easy to miss if you hold
 object-storage credentials, because the lookup then quietly falls through to the
 archive and succeeds.
 
-`shared.r2.ensure_data_file` falls back to this directory, so a script asking for
-`raw/census/zip_cbsa.csv` finds `public/census/zip_cbsa.csv` if the former is absent.
-
 IPEDS Completions files are NOT here: ~900 MB, public domain, and fetched straight from
 NCES by `Analysis/pipeline/05_download_ipeds.py` into `Analysis/Data/raw/ipeds/`.
 
