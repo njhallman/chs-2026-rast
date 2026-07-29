@@ -26,32 +26,32 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'
 from shared.paths import data_dir            # noqa: E402
 from shared.r2 import _download, remote_configured   # noqa: E402
 
-# (archive subpath, destination under Analysis/Data/public/, provenance note)
+# (subpath, provenance note)
+#
+# The destination under Analysis/Data/public/ is ALWAYS the subpath itself, because
+# ensure_data_file() falls back to public/<subpath> verbatim. Storing a file under
+# any other name makes it invisible to the code -- which is easy to miss if you
+# have object-storage credentials, since the fetch then silently succeeds instead.
 PUBLIC_INPUTS = [
     (
         'raw/census/zip_cbsa.csv',
-        'census/zip_cbsa.csv',
         'US Census ZCTA-to-county relationship file + OMB CBSA delineation. Public domain.',
     ),
     (
         'raw/census/cbsa_revelio_metro.csv',
-        'census/cbsa_revelio_metro.csv',
         'Revelio metro_area -> CBSA code map, hand-reviewed by the authors.',
     ),
     (
-        'interim/at_revelio_firm_mapping.json',
         'interim/at_revelio_firm_mapping.json',
         'Accounting Today Top 100 firm -> Revelio company_raw map with PCAOB '
         'annual-inspection status. Hand-curated by the authors.',
     ),
     (
         'proxy statements/proxy_dei_keywords_v2.csv',
-        'proxy/proxy_dei_keywords_v2.csv',
         'DEI/gender keyword counts per DEF 14A filing, computed by '
         'Analysis/pipeline/08_fetch_proxy_keywords.py from public SEC filings.',
     ),
     (
-        'edgar/company_locations.csv',
         'edgar/company_locations.csv',
         'Registrant business city/state/ZIP by CIK, latest snapshot per filer, '
         'from EDGAR company metadata. Public domain. See --extract-locations if '
@@ -72,10 +72,9 @@ def public_dir():
 def do_list():
     print(f"{len(PUBLIC_INPUTS)} committed public inputs "
           "(IPEDS is excluded -- see note in this file):\n")
-    for src, dst, note in PUBLIC_INPUTS:
-        present = os.path.exists(os.path.join(public_dir(), dst))
-        print(f"  [{'x' if present else ' '}] {dst}")
-        print(f"        from archive: {src}")
+    for src, note in PUBLIC_INPUTS:
+        present = os.path.exists(os.path.join(public_dir(), src))
+        print(f"  [{'x' if present else ' '}] {src}")
         print(f"        {note}\n")
 
 
@@ -86,17 +85,17 @@ def do_fetch():
             "R2_SECRET_ACCESS_KEY, and R2_ENDPOINT (or R2_ACCOUNT_ID)."
         )
 
-    for src, dst, _note in PUBLIC_INPUTS:
-        dest_path = os.path.join(public_dir(), dst)
+    for src, _note in PUBLIC_INPUTS:
+        dest_path = os.path.join(public_dir(), src)   # mirrors the subpath exactly
         if os.path.exists(dest_path):
-            print(f"  SKIP (exists): {dst}")
+            print(f"  SKIP (exists): {src}")
             continue
         os.makedirs(os.path.dirname(dest_path), exist_ok=True)
         try:
             size_mb = _download(f"Data/{src}", dest_path)
-            print(f"  Fetched {dst} ({size_mb:.1f} MB)")
+            print(f"  Fetched {src} ({size_mb:.1f} MB)")
         except Exception as e:
-            print(f"  FAILED {dst}: {e}")
+            print(f"  FAILED {src}: {e}")
 
     print("\nIPEDS is not fetched here (~900 MB, not committed): run "
           "Analysis/pipeline/05_download_ipeds.py to get it from NCES.")

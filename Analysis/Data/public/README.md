@@ -8,12 +8,20 @@ Labs, BoardEx, Ideagen Audit Analytics) and the panels derived from it are **not
 Expected contents:
 
 ```
-census/zip_cbsa.csv                   ZIP5 -> CBSA crosswalk (Census ZCTA + OMB delineation)
-census/cbsa_revelio_metro.csv         CBSA -> Revelio metro_area, hand-reviewed
-interim/at_revelio_firm_mapping.json  Accounting Today firm -> company_raw + inspection status
-edgar/company_locations.csv           Registrant business city/state/ZIP by CIK (SEC submissions API)
-proxy/proxy_dei_keywords_v2.csv       DEI/gender keyword counts per DEF 14A filing
+raw/census/zip_cbsa.csv                    ZIP5 -> CBSA crosswalk (Census ZCTA + OMB delineation)
+raw/census/cbsa_revelio_metro.csv          CBSA -> Revelio metro_area, hand-reviewed
+interim/at_revelio_firm_mapping.json       Accounting Today firm -> company_raw + inspection status
+edgar/company_locations.csv                Registrant business city/state/ZIP by CIK (SEC submissions API)
+geo/us-states.json                         US state boundaries for the retention-gap map (Census TIGER)
+proxy statements/proxy_dei_keywords_v2.csv DEI/gender keyword counts per DEF 14A filing
 ```
+
+**The path under `public/` must match the subpath the code requests, exactly.**
+`ensure_data_file('raw/census/zip_cbsa.csv')` falls back to
+`public/raw/census/zip_cbsa.csv` verbatim -- so a file stored under any other name
+is invisible to the scripts. That failure is easy to miss if you hold
+object-storage credentials, because the lookup then quietly falls through to the
+archive and succeeds.
 
 `shared.r2.ensure_data_file` falls back to this directory, so a script asking for
 `raw/census/zip_cbsa.csv` finds `public/census/zip_cbsa.csv` if the former is absent.
