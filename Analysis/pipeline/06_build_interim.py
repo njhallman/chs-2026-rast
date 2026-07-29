@@ -335,15 +335,27 @@ def flag_bad_ranks(df):
 
 # ── Step 4: Build Other FS interim dataset ───────────────────────────────────
 
+def select_other_fs(revFs):
+    """Return the non-Big-4-audit subset, freeing the caller's full frame.
+
+    Split out of build_other_fs() so that main() can discard the full
+    multi-million-row position frame before the education file is loaded, rather
+    than holding both at once.
+    """
+    mask = (revFs['auditor_key'].isna()) & (~revFs['role_k1500'].isin(['audit', 'auditor']))
+    return revFs[mask].copy()
+
+
 def build_other_fs(revFs, edu):
-    """Build the Other Financial Services interim dataset."""
+    """Build the Other Financial Services interim dataset.
+
+    `revFs` must already be the subset from select_other_fs().
+    """
     print("\n" + "─" * 60)
     print("Building revOtherFs (non-B4 audit positions)")
     print("─" * 60)
 
-    # Everything except Big 4 audit positions
-    ofs = revFs[(revFs['auditor_key'].isna()) &
-                (~revFs['role_k1500'].isin(['audit', 'auditor']))].copy()
+    ofs = revFs
     print(f"  Initial: {ofs['user_id'].nunique():,} workers, {len(ofs):,} positions")
 
     # Drop unnecessary columns
@@ -385,7 +397,15 @@ def main():
     revFs = load_all_positions()
     revFs['aud_firm'] = revFs['company_raw'].map(AUDIT_FIRM_MAPPING)
     revFs['auditor_key'] = revFs['aud_firm'].map(AUDIT_FIRM_KEY)
-    ofs_edu = load_education(source='combined')
+    # Narrow to the analysis subset and release the full frame before loading
+    # education: holding both an 8.9M-row position frame and an 8.2M-row education
+    # frame exhausts a 16 GB machine.
+    revFs = select_other_fs(revFs)
+    gc.collect()
+    # Restrict education to the users actually present, using the existing
+    # user_ids parameter. Education is reduced to one row per user regardless, so
+    # this yields identical values for every retained user.
+    ofs_edu = load_education(source='combined', user_ids=revFs['user_id'].unique())
     ofs = build_other_fs(revFs, ofs_edu)
     del ofs_edu
     ofs_path = os.path.join(INTERIM_DIR, 'revOtherFs.feather')
