@@ -1,0 +1,22 @@
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{2}{D{.}{.}{-1}}}
+\toprule
+                    &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}\\
+                    &\multicolumn{1}{c}{\shortstack{Auditors\\ DV = Hazard}}&\multicolumn{1}{c}{\shortstack{Auditors\\ DV = Retained}}\\
+\midrule
+\FEMALExPOST         &      -0.126\sym{***}&       0.021\sym{***}\\
+                    &     (0.010)         &     (0.002)         \\
+\FEMALE              &       0.061\sym{***}&      -0.012\sym{***}\\
+                    &     (0.006)         &     (0.001)         \\
+Constant            &                     &       0.845\sym{***}\\
+                    &                     &     (0.001)         \\
+\midrule
+Observations        &     743,878         &     725,235         \\
+Unique employees    &     150,114         &     146,823         \\
+Adjusted R-squared  &                     &       0.007         \\
+Controls            &         Yes         &         Yes         \\
+Fixed effects       &         Y,E         &     C,E,Y*M         \\
+\bottomrule
+\end{tabular}
+}

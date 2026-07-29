@@ -1,0 +1,27 @@
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{4}{D{.}{.}{-1}}}
+\toprule
+                    &\multicolumn{1}{c}{(1)}         &\multicolumn{1}{c}{(2)}         &\multicolumn{1}{c}{(3)}         &\multicolumn{1}{c}{(4)}         \\
+\midrule
+\FEMALE\ $\times$ AC Female \%           &       0.066\sym{***}&                     &                     &       0.003         \\
+                    &     (0.009)         &                     &                     &     (0.015)         \\
+AC Female \%       &      -0.044\sym{***}&                     &                     &      -0.021\sym{**} \\
+                    &     (0.009)         &                     &                     &     (0.010)         \\
+\FEMALE\ $\times$ Gender Keywords          &                     &       0.002\sym{***}&                     &      -0.000         \\
+                    &                     &     (0.000)         &                     &     (0.001)         \\
+Gender Keywords &                     &      -0.001\sym{**} &                     &       0.000         \\
+                    &                     &     (0.000)         &                     &     (0.000)         \\
+\FEMALExPOSTFORMAP  &                     &                     &       0.021\sym{***}&       0.020\sym{***}\\
+                    &                     &                     &     (0.002)         &     (0.002)         \\
+\FEMALE              &      -0.013\sym{***}&      -0.007\sym{***}&      -0.013\sym{***}&      -0.012\sym{***}\\
+                    &     (0.002)         &     (0.001)         &     (0.001)         &     (0.002)         \\
+\midrule
+Observations        &     593,442         &     576,267         &     743,871         &     569,086         \\
+Unique employees    &     125,617         &     122,599         &     150,113         &     121,227         \\
+Adjusted R-squared  &       0.006         &       0.007         &       0.005         &       0.007         \\
+Controls            &         Yes         &         Yes         &         Yes         &         Yes         \\
+Fixed effects       &       C,Y,E         &       C,Y,E         &       C,Y,E         &       C,Y,E         \\
+\bottomrule
+\end{tabular}
+}

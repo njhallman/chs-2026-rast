@@ -1,0 +1,119 @@
+\ProvidesPackage{preamble}
+
+\usepackage{comment} % Allow for commenting out blocks of code
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1.0in]{geometry} % Set page margins
+\usepackage[flushleft]{threeparttable}
+\usepackage{makecell}
+\usepackage[hang,flushmargin]{footmisc} % Format footnotes
+\usepackage{longtable} % Allow "longtable" format, which lets long tables span multiple pages automatically
+\usepackage{booktabs}
+\usepackage[T1]{fontenc}
+\usepackage{rotating}
+\usepackage{adjustbox}
+\usepackage{dcolumn} % For the D column specifier in tabular
+\usepackage{mathptmx}
+\usepackage{authblk}
+\usepackage[useregional]{datetime2}
+\usepackage{ragged2e} 
+\usepackage{amsmath}
+\usepackage[capposition=top]{floatrow} % Helps center tables somehow
+\usepackage[table]{xcolor} % Row shading in tables
+\usepackage[colorlinks,allcolors=blue]{hyperref} % Create internal links
+\usepackage{pdflscape} % Allow some pages to be landscape
+\usepackage{setspace} % Allow for double spacing 
+\usepackage[justification=centering,large]{caption}
+\usepackage{charter} % font
+\usepackage{indentfirst}\setlength\parindent{1cm} %indent first paragraph of sections
+\usepackage{datetime}
+\usepackage{datetime2}
+\usepackage{enumitem}
+\usepackage{needspace} % Prevent page breaks between item labels and content
+
+
+\usepackage{changepage}
+
+% RAST manuscript preparation guidelines: section headings bold, subsection and
+% subsubsection headings italic (not bold), only first word capitalized.
+\usepackage{titlesec}
+\titleformat*{\section}{\large\bfseries}
+\titleformat*{\subsection}{\normalsize\itshape}
+\titleformat*{\subsubsection}{\normalsize\itshape}
+
+\renewcommand{\theequation}{\textit{Eq. \arabic{equation}}}
+
+% Allow line breaks with \\ in specialcells
+	\newcommand{\specialcell}[2][c]{%
+	\begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
+    
+
+% Format citations and bibliography per the RAST manuscript preparation
+% guidelines, e.g.:
+%   Hansen, J., D. Eriksen, and S. Dahl. 2002. The accrual anomaly in Norway.
+%   The Accounting Review 12: 257-271.
+\bibliographystyle{plain}
+\usepackage[backend=biber, style=authoryear, uniquename=false, uniquelist=true, sorting=ynt, sortcites=true, maxbibnames=10, giveninits=true, doi=false, isbn=false, urldate=long, dateabbrev=false, dashed=false]{biblatex}
+        \renewbibmacro{in:}{}
+        \addbibresource{references.bib}
+\usepackage{xpatch}
+\AtEveryBibitem{\clearfield{month}}
+\AtEveryBibitem{\clearfield{day}}
+\makeatletter
+\AtEveryBibitem{\global\undef\bbx@lasthash}
+\makeatother
+\DeclareFieldFormat*{title}{#1} % Remove quotes from the title
+% First author "Last, F."; subsequent authors "F. Last" (biblatex default),
+% per the RAST example "Hansen, J., D. Eriksen, and S. Dahl."
+\DeclareFieldFormat{journaltitle}{\mkbibemph{#1}\isdot} % Journal name in italics
+\DeclareFieldFormat{pages}{#1} % Remove "pp" before pages
+\AtEveryBibitem{% Suppress the issue number per the RAST example "12: 257-271"
+    \ifboolexpr{test {\ifentrytype{article}}}
+    {\clearfield{number}}
+    {}%
+}
+\AtEveryBibitem{% Suppress the "Tech. rep." type label on report entries
+    \ifboolexpr{test {\ifentrytype{report}}}
+    {\clearfield{type}}
+    {}%
+}
+% Year directly after the authors, set off by periods ("Dahl. 2002. Title"),
+% instead of the authoryear default parenthetical "(2002)".
+\xpatchbibmacro{date+extradate}
+    {\printtext[parens]}
+    {\setunit{\addperiod\space}\printtext}
+    {}
+    {\PackageWarning{preamble}{Failed to patch date+extradate}}
+% Colon between volume (or container) and pages: "12: 257-271".
+\renewcommand{\bibpagespunct}{\addcolon\space}
+% Plain URL (no "URL:" prefix) followed by "Accessed <long date>." per the RAST
+% example "http://... . Accessed June 26, 2020."
+\DeclareFieldFormat{url}{\url{#1}}
+\DeclareFieldFormat{urldate}{#1} % No parentheses around the accessed date
+\renewbibmacro*{urldate}{\printtext{Accessed\addspace}\printurldate}
+\renewbibmacro*{url+urldate}{%
+    \usebibmacro{url}%
+    \iffieldundef{urlyear}
+        {}
+        {\setunit{\addperiod\space}\usebibmacro{urldate}}}
+% Serial comma before the final name in bibliography name lists ("Bai, J., and
+% P. Perron"), without affecting in-text citations ("Bai and Perron 1998").
+\DeclareDelimFormat[bib,biblist]{finalnamedelim}{\addcomma\space\bibstring{and}\space}
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+

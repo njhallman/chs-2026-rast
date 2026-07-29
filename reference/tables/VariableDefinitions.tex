@@ -1,0 +1,66 @@
+\begin{longtable}{>{\raggedright\arraybackslash}p{3cm}p{13cm}}
+
+%----- Header/Footer Setup -----%
+\captionsetup{labelfont=bf, singlelinecheck=off, justification=raggedright, labelsep=none}
+\caption{: Variable definitions}
+
+\\[-1.8ex]\hline \hline \\[-1.8ex]
+\endfirsthead
+
+\multicolumn{2}{l}%
+{{\textit{Continued from previous page}}} \\
+\midrule
+\endhead
+
+\multicolumn{2}{r}{{\textit{Continued on next page}}}
+\endfoot
+
+\multicolumn{2}{r}{{ }}
+\endlastfoot
+
+%----- Variable Definitions -----%
+
+\RETAINED & An indicator variable set equal to 1 if the professional remains with the firm the following year, 0 otherwise. \\
+\midrule
+
+\PROMOTED & An indicator variable set equal to 1 if the auditor is promoted to a higher rank in the following year, 0 otherwise. \\
+\midrule
+
+\FEMALE & An indicator variable set equal to 1 if the professional is classified as female by the \textit{sex\_predicted} field Revelio, and 0 otherwise. \\
+\midrule
+
+\MASTERS & An indicator variable set equal to 1 if the auditor holds a master's degree or higher, and 0 otherwise, according to the \textit{highest\_dgree} field in the Revelio data \\
+\midrule
+
+\TOPUNIV & An indicator variable set equal to 1 if the professional attended a top university as defined by \textcite{FGH2022}.\\
+\midrule
+
+\APIRACE & An indicator variable set equal to 1 if the professional is classified as API (i.e., Asian and Pacific Islander) by the \textit{ethnicity\_predicted} field in Revelio, 0 otherwise.\\
+\midrule
+
+\BLACKRACE & An indicator variable set equal to 1 if the professional is classified as Black by the \textit{ethnicity\_predicted} field in Revelio, 0 otherwise.\\
+\midrule
+
+\OTHERRACE & An indicator variable set equal to 1 if the professional is classified as any ethnicity other than API, Black, or White by the \textit{ethnicity\_predicted} field in Revelio, 0 otherwise.\\
+\midrule
+
+\POSTFORMAP & An indicator variable set equal to 1 for calendar years 2015 and later, when the PCAOB's Form AP disclosure requirement was in effect.\\
+\midrule
+
+AC Female \% & The mean share of female audit committee members at Big~4 audit clients, aggregated to the CBSA-firm-year level. Constructed from BoardEx director data linked to Audit Analytics engagement data.\\
+\midrule
+
+Gender Keywords & The standardized count of gender-related keywords in SEC proxy statements (DEF~14A) filed by Big~4 audit clients, aggregated to the CBSA-firm-year level. Extracted from proxy statement text via the local-edgar archive.\\
+\midrule
+
+Salary \% Change & The percentage change in salary from the auditor's final Big~4 position to their first post-Big~4 position. Computed as $(S_{next} - S_{B4}) / S_{B4} \times 100$. Available only for leavers (\RETAINED\ = 0) with an observed next position and valid salary data. Winsorized at the 1st and 99th percentiles.\\
+\midrule
+
+Gap Days & The number of calendar days between the end of the auditor's Big~4 position and the start of their next position. Available only for leavers (\RETAINED\ = 0) with an observed next position. Winsorized at the 1st and 99th percentiles. Log-transformed in regressions.\\
+
+\\[-1.8ex]\hline \hline \\[-1.8ex]
+
+\label{table:variableDefinitions}
+\end{longtable}
+
+

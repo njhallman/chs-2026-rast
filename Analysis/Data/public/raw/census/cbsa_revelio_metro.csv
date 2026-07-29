@@ -1,0 +1,103 @@
+revelio_metro,cbsa_code,cbsa_title,match_type,auditor_obs
+albany metropolitan area,10580,"Albany-Schenectady-Troy, NY",exact_primary,1393
+albuquerque metropolitan area,10740,"Albuquerque, NM",exact_primary,498
+anaheim metropolitan area,31080,"Los Angeles-Long Beach-Anaheim, CA",manual_submsa,11415
+anchorage metropolitan area,11260,"Anchorage, AK",exact_primary,862
+atlanta metropolitan area,12060,"Atlanta-Sandy Springs-Roswell, GA",exact_primary,23605
+austin metropolitan area,12420,"Austin-Round Rock-San Marcos, TX",exact_primary,5074
+bakersfield metropolitan area,12540,"Bakersfield-Delano, CA",exact_primary,21
+baltimore metropolitan area,12580,"Baltimore-Columbia-Towson, MD",exact_primary,5865
+baton rouge metropolitan area,12940,"Baton Rouge, LA",exact_primary,425
+birmingham metropolitan area (alabama),13820,"Birmingham, AL",partial,3671
+boise metropolitan area,14260,"Boise City, ID",partial,1128
+boston metropolitan area,14460,"Boston-Cambridge-Newton, MA-NH",exact_primary,34243
+buffalo metropolitan area,15380,"Buffalo-Cheektowaga, NY",exact_primary,2046
+charleston metropolitan area,16700,"Charleston-North Charleston, SC",exact_primary,413
+charlotte metropolitan area,16740,"Charlotte-Concord-Gastonia, NC-SC",exact_primary,11247
+chattanooga metropolitan area,16860,"Chattanooga, TN-GA",exact_primary,432
+chicago metropolitan area,16980,"Chicago-Naperville-Elgin, IL-IN",exact_primary,40534
+cincinnati metropolitan area,17140,"Cincinnati, OH-KY-IN",exact_primary,6075
+cleveland metropolitan area,17410,"Cleveland, OH",exact_primary,9448
+colorado springs metropolitan area,17820,"Colorado Springs, CO",exact_primary,180
+columbia metropolitan area,17900,"Columbia, SC",exact_primary,558
+columbus metropolitan area,18140,"Columbus, OH",exact_primary,6428
+corpus christi metropolitan area,18580,"Corpus Christi, TX",exact_primary,73
+dallas metropolitan area,19100,"Dallas-Fort Worth-Arlington, TX",exact_primary,24981
+dayton metropolitan area,19430,"Dayton-Kettering-Beavercreek, OH",exact_primary,906
+denver metropolitan area,19740,"Denver-Aurora-Centennial, CO",exact_primary,12736
+des moines metropolitan area,19780,"Des Moines-West Des Moines, IA",exact_primary,2532
+detroit metropolitan area,19820,"Detroit-Warren-Dearborn, MI",exact_primary,10536
+el paso metropolitan area,21340,"El Paso, TX",exact_primary,251
+eugene metropolitan area,21660,"Eugene-Springfield, OR",exact_primary,72
+fayetteville metropolitan area,22180,"Fayetteville, NC",manual_state_fix,72
+fort collins metropolitan area,22660,"Fort Collins-Loveland, CO",exact_primary,210
+fort lauderdale metropolitan area,33100,"Miami-Fort Lauderdale-West Palm Beach, FL",manual_submsa,3379
+fort wayne metropolitan area,23060,"Fort Wayne, IN",exact_primary,368
+fort worth metropolitan area,19100,"Dallas-Fort Worth-Arlington, TX",manual_submsa,2466
+fresno metropolitan area,23420,"Fresno, CA",exact_primary,406
+gainesville metropolitan area,23540,"Gainesville, FL",exact_primary,105
+grand rapids metropolitan area,24340,"Grand Rapids-Wyoming-Kentwood, MI",exact_primary,1489
+greensboro metropolitan area,24660,"Greensboro-High Point, NC",exact_primary,1817
+greenville metropolitan area,24860,"Greenville-Anderson-Greer, SC",exact_primary,1754
+hartford metropolitan area,25540,"Hartford-West Hartford-East Hartford, CT",exact_primary,7428
+honolulu metropolitan area,46520,"Urban Honolulu, HI",partial,1366
+houston metropolitan area,26420,"Houston-Pasadena-The Woodlands, TX",exact_primary,30026
+huntsville metropolitan area,26620,"Huntsville, AL",exact_primary,146
+indianapolis metropolitan area,26900,"Indianapolis-Carmel-Greenwood, IN",exact_primary,5511
+jackson metropolitan area,27140,"Jackson, MS",exact_primary,530
+jacksonville metropolitan area,27260,"Jacksonville, FL",exact_primary,3173
+kansas city metropolitan area,28140,"Kansas City, MO-KS",exact_primary,7466
+knoxville metropolitan area,28940,"Knoxville, TN",exact_primary,678
+las vegas metropolitan area,29820,"Las Vegas-Henderson-North Las Vegas, NV",exact_primary,2526
+lexington metropolitan area,30460,"Lexington-Fayette, KY",exact_primary,277
+lincoln metropolitan area,30700,"Lincoln, NE",exact_primary,285
+little rock metropolitan area,30780,"Little Rock-North Little Rock-Conway, AR",exact_primary,701
+long beach metropolitan area,31080,"Los Angeles-Long Beach-Anaheim, CA",manual_submsa,1271
+los angeles metropolitan area,31080,"Los Angeles-Long Beach-Anaheim, CA",exact_primary,30283
+louisville metropolitan area,31140,"Louisville/Jefferson County, KY-IN",partial,2637
+lubbock metropolitan area,31180,"Lubbock, TX",exact_primary,48
+madison metropolitan area,31540,"Madison, WI",exact_primary,362
+memphis metropolitan area,32820,"Memphis, TN-MS-AR",exact_primary,2317
+miami metropolitan area,33100,"Miami-Fort Lauderdale-West Palm Beach, FL",exact_primary,8070
+milwaukee metropolitan area,33340,"Milwaukee-Waukesha, WI",exact_primary,6701
+minneapolis metropolitan area,33460,"Minneapolis-St. Paul-Bloomington, MN-WI",exact_primary,14192
+mobile metropolitan area,33660,"Mobile, AL",exact_primary,143
+nashville metropolitan area,34980,"Nashville-Davidson--Murfreesboro--Franklin, TN",exact_primary,5641
+new orleans metropolitan area,35380,"New Orleans-Metairie, LA",exact_primary,2730
+new york city metropolitan area,35620,"New York-Newark-Jersey City, NY-NJ",partial,93525
+oklahoma city metropolitan area,36420,"Oklahoma City, OK",exact_primary,1357
+omaha metropolitan area,36540,"Omaha, NE-IA",exact_primary,2486
+orlando metropolitan area,36740,"Orlando-Kissimmee-Sanford, FL",exact_primary,4299
+philadelphia metropolitan area,37980,"Philadelphia-Camden-Wilmington, PA-NJ-DE-MD",exact_primary,26167
+phoenix metropolitan area,38060,"Phoenix-Mesa-Chandler, AZ",exact_primary,7423
+pittsburgh metropolitan area,38300,"Pittsburgh, PA",exact_primary,8814
+portland metropolitan area,38900,"Portland-Vancouver-Hillsboro, OR-WA",exact_primary,5383
+providence metropolitan area,39300,"Providence-Warwick, RI-MA",exact_primary,2095
+raleigh metropolitan area,39580,"Raleigh-Cary, NC",exact_primary,5443
+reno metropolitan area,39900,"Reno, NV",exact_primary,245
+richmond metropolitan area,40060,"Richmond, VA",exact_primary,4200
+riverside metropolitan area,40140,"Riverside-San Bernardino-Ontario, CA",exact_primary,144
+rochester metropolitan area,40380,"Rochester, NY",exact_primary,2097
+sacramento metropolitan area,40900,"Sacramento-Roseville-Folsom, CA",exact_primary,2618
+salt lake city metropolitan area,41620,"Salt Lake City-Murray, UT",exact_primary,4323
+san antonio metropolitan area,41700,"San Antonio-New Braunfels, TX",exact_primary,3056
+san diego metropolitan area,41740,"San Diego-Chula Vista-Carlsbad, CA",exact_primary,8075
+san francisco metropolitan area,41860,"San Francisco-Oakland-Fremont, CA",exact_primary,32347
+san jose metropolitan area (california),41940,"San Jose-Sunnyvale-Santa Clara, CA",partial,13269
+savannah metropolitan area,42340,"Savannah, GA",exact_primary,113
+seattle metropolitan area,42660,"Seattle-Tacoma-Bellevue, WA",exact_primary,12427
+spokane metropolitan area,44060,"Spokane-Spokane Valley, WA",exact_primary,137
+springfield metropolitan area,44180,"Springfield, MO",manual_state_fix,67
+st louis metropolitan area,41180,"St. Louis, MO-IL",manual,3813
+stockton metropolitan area,44700,"Stockton-Lodi, CA",exact_primary,156
+syracuse metropolitan area,45060,"Syracuse, NY",exact_primary,1005
+tallahassee metropolitan area,45220,"Tallahassee, FL",exact_primary,124
+tampa metropolitan area,45300,"Tampa-St. Petersburg-Clearwater, FL",exact_primary,8655
+toledo metropolitan area,45780,"Toledo, OH",exact_primary,1192
+tucson metropolitan area,46060,"Tucson, AZ",exact_primary,333
+tulsa metropolitan area,46140,"Tulsa, OK",exact_primary,2011
+virginia beach metropolitan area,47260,"Virginia Beach-Chesapeake-Norfolk, VA-NC",exact_primary,1272
+washington metropolitan area,47900,"Washington-Arlington-Alexandria, DC-VA-MD-WV",exact_primary,31212
+west palm beach metropolitan area,33100,"Miami-Fort Lauderdale-West Palm Beach, FL",manual_submsa,1367
+wichita metropolitan area,48620,"Wichita, KS",exact_primary,383
+wilmington metropolitan area,48900,"Wilmington, NC",exact_primary,191

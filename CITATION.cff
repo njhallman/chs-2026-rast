@@ -1,0 +1,40 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite the paper below."
+title: "Reproducibility package: The reversal of gender disparities in the retention and promotion of Big 4 auditors"
+abstract: >-
+  Code and documentation reproducing the tables and figures in "The reversal of
+  gender disparities in the retention and promotion of Big 4 auditors"
+  (Review of Accounting Studies). The licensed employment and audit data the
+  analysis runs on are not redistributed; see DATA_AVAILABILITY.md.
+type: software
+license: MIT
+repository-code: "https://github.com/njhallman/chs-2026-rast"
+authors:
+  - family-names: Chen
+    given-names: Jade Huayu
+    affiliation: "Von Allmen School of Accountancy, University of Kentucky"
+  - family-names: Hallman
+    given-names: Nicholas
+    affiliation: "McCombs School of Business, The University of Texas at Austin"
+    email: nicholashallman@utexas.edu
+  - family-names: Sunder
+    given-names: Jayanthi
+    affiliation: "Eller College of Management, The University of Arizona"
+keywords:
+  - gender disparities
+  - auditing
+  - retention
+  - promotion
+  - Form AP
+preferred-citation:
+  type: article
+  title: "The reversal of gender disparities in the retention and promotion of Big 4 auditors"
+  journal: "Review of Accounting Studies"
+  year: 2026
+  authors:
+    - family-names: Chen
+      given-names: Jade Huayu
+    - family-names: Hallman
+      given-names: Nicholas
+    - family-names: Sunder
+      given-names: Jayanthi

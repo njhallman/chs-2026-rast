@@ -1,0 +1,22 @@
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{2}{D{.}{.}{-1}}}
+\toprule
+                    &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}\\
+                    &\multicolumn{1}{c}{\shortstack{Leavers w/ Next Job\\ DV = Salary \% Change}}&\multicolumn{1}{c}{\shortstack{Leavers w/ Next Job\\ DV = Log Gap Days}}\\
+\midrule
+\FEMALExPOST         &       2.587\sym{***}&      -0.005         \\
+                    &     (0.669)         &     (0.040)         \\
+\FEMALE              &      -5.443\sym{***}&      -0.100\sym{***}\\
+                    &     (0.521)         &     (0.028)         \\
+Constant            &       9.568\sym{***}&       2.620\sym{***}\\
+                    &     (0.316)         &     (0.018)         \\
+\midrule
+Observations        &      82,647         &      83,794         \\
+Unique employees    &      82,647         &      83,794         \\
+Adjusted R-squared  &       0.028         &       0.024         \\
+Controls            &         Yes         &         Yes         \\
+Fixed effects       &       F,Y,C         &       F,Y,C         \\
+\bottomrule
+\end{tabular}
+}
