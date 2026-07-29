@@ -59,6 +59,7 @@ These live in `Analysis/Data/public/` and are either public-domain or small hand
 | `interim/at_revelio_firm_mapping.json` | *Accounting Today* Top 100 firm → Revelio `company_raw` mapping, with PCAOB annual-inspection status. Hand-curated by the authors. |
 | `proxy/proxy_dei_keywords_v2.csv` | DEI and gender keyword counts per DEF 14A filing, computed by `08_fetch_proxy_keywords.py` from public SEC filings. |
 | `edgar/company_locations.csv` | Registrant business city, state, and ZIP by CIK, from the SEC submissions API. Public domain. See the caveat below. |
+| `geo/us-states.json` | US state boundaries (Census TIGER, public domain), used by the retention-gap map. Vendored here because the figure script previously fetched it from an unpinned GitHub URL at run time, which made the figure depend on a third-party file that could change without notice. |
 
 The last two exist so that no reproducer needs the authors' local mirror of SEC filings.
 `08_fetch_proxy_keywords.py` documents how the keyword counts were produced and requires

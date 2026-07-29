@@ -1,31 +1,27 @@
 """
 Show geographic variation in DEI/AC mechanisms at the METRO level,
-using keyword-based DEI measures from the local-edgar proxy archive (v2).
+using keyword-based DEI measures built from SEC proxy statements (v2).
 
 Split metros into high-change vs low-change groups and plot the time series.
 Uses CBSA-level linkage via Census ZIP-CBSA crosswalk.
 
 Data sources:
-  - proxy_dei_keywords_v2.csv: keyword counts from local-edgar markdown proxies
-  - local-edgar company_snapshots: business ZIP for CBSA mapping
+  - proxy_dei_keywords_v2.csv: keyword counts from SEC DEF 14A filings
+  - edgar/company_locations.csv: registrant business ZIP, for CBSA mapping
   - BoardEx: audit committee gender composition
 
 Produces: mechanism_variation_metro.png
 """
-import sys, os, sqlite3
+import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
-from pathlib import Path
-
 from shared.paths import figures_dir
 from shared.r2 import ensure_data_file
 from shared.metro_crosswalk import add_cbsa_to_companies
-
-EDGAR_DB = Path(os.path.expanduser("~/Documents/Projects/local-edgar/archive/db/edgar.db"))
 
 us_state_abbrev = {
     'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
@@ -36,24 +32,21 @@ us_state_abbrev = {
 }
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Load v2 keyword data + company locations from local-edgar
+# Load v2 keyword data + company locations
 # ══════════════════════════════════════════════════════════════════════════════
 print("Loading v2 keyword data...")
 kw = pd.read_csv(ensure_data_file("proxy statements/proxy_dei_keywords_v2.csv"))
 kw = kw[kw['status'] == 'ok'].copy()
 print(f"  {len(kw):,} proxy statements with keyword data")
 
-# Get company business ZIP from local-edgar company_snapshots (latest snapshot per CIK)
-print("Loading company locations from local-edgar...")
-conn = sqlite3.connect(str(EDGAR_DB))
-locs = pd.read_sql_query("""
-    SELECT cik, business_zip AS zip, business_state AS state, business_city AS city
-    FROM company_snapshots
-    WHERE business_zip IS NOT NULL AND business_state IS NOT NULL
-    GROUP BY cik
-    HAVING snapshot_date = MAX(snapshot_date)
-""", conn)
-conn.close()
+# Registrant business addresses by CIK, for the ZIP -> CBSA mapping. Same input
+# 07_prepare_data.py uses; committed under Analysis/Data/public/edgar/.
+print("Loading company locations...")
+locs = pd.read_csv(
+    ensure_data_file("edgar/company_locations.csv"),
+    dtype={'zip': str, 'state': str, 'city': str},
+)
+locs = locs.dropna(subset=['zip', 'state'])
 locs['cik'] = locs['cik'].astype(int)
 print(f"  {len(locs):,} companies with location data")
 

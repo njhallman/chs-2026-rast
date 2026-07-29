@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from shared.paths import figures_dir
 from shared.data_loader import load_b4_exp
+from shared.r2 import ensure_data_file
 
 print("Creating retentionGapMap.png")
 
@@ -44,10 +45,13 @@ print(f"  Post-Form AP: {len(post)} states")
 print(f"  Pre gap range: [{pre['gap'].min():.3f}, {pre['gap'].max():.3f}]")
 print(f"  Post gap range: [{post['gap'].min():.3f}, {post['gap'].max():.3f}]")
 
-# Load US states shapefile
-us_states = gpd.read_file(
-    'https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json'
-)
+# US state boundaries. Vendored into the repository rather than fetched at run
+# time: this previously read an unpinned GitHub raw URL, so the figure depended on
+# a third-party file that could change without notice, and the script needed
+# network access to run at all.
+# Source: https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json
+# (US Census TIGER state boundaries, public domain)
+us_states = gpd.read_file(ensure_data_file('geo/us-states.json'))
 
 # Merge
 pre_geo = us_states.merge(pre, left_on='name', right_on='state', how='left')
