@@ -94,11 +94,22 @@ needs **more than 16 GB of RAM** even after the memory reductions applied here
 (reading only the surviving columns, narrowing the education file, and releasing
 the position frame before education loads).
 
-If you hit this, either run that phase on a machine with more memory (32 GB is
-comfortable), or skip it: the other-financial-services panel feeds only
-`topCompanies.tex`, `benchmarkBB5IB.png` and `benchmarkOFS.png`. Everything else
--- Tables 1 through 7 and the other five figures -- depends solely on the Big 4
-panel, which builds within a few GB and is written before the heavy phase begins.
+`07_prepare_data.py` has the same problem in the same place: its
+other-financial-services half explodes that panel to roughly 14.9 million
+worker-years and is likewise OOM-killed on 16 GB. Its Big 4 half completes and its
+panels are written first.
+
+If you hit either, run on a machine with more memory (32 GB is comfortable), or
+skip that half: the other-financial-services panels feed only `topCompanies.tex`,
+`benchmarkBB5IB.png` and `benchmarkOFS.png`. Everything else -- Tables 1 through 7
+and the other five figures -- depends solely on the Big 4 panel, which builds in a
+few GB and is written before the heavy phase begins in both scripts.
+
+One consequence worth knowing: `07` writes `processed/sample_counts.json` last, so
+a run that dies in the other-financial-services half leaves you with rebuilt Big 4
+panels but no counts file, and Table 1 cannot be regenerated even though every
+number in it comes from the Big 4 half. Calling `prepare_audit_data()` on its own
+produces those counts.
 
 ### `geopandas` import failures
 
