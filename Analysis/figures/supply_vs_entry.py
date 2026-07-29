@@ -49,6 +49,19 @@ USNEWS_ACCT_UNITIDS = {
 # ── Parse IPEDS completions: Bachelor's accounting from top programs ────────
 print("Parsing IPEDS completions (bachelor's, US News top accounting)...")
 ipeds_results = []
+_missing_years = [y for y in YEARS
+                  if not os.path.exists(os.path.join(IPEDS_CACHE, f'C{y}_A.csv'))]
+if len(_missing_years) == len(list(YEARS)):
+    raise FileNotFoundError(
+        f"No IPEDS completions files found in {IPEDS_CACHE}.\n"
+        "  Run: python Analysis/pipeline/05_download_ipeds.py  (public NCES data, "
+        "no authentication needed). See DATA_AVAILABILITY.md."
+    )
+if _missing_years:
+    print(f"  WARNING: no IPEDS file for {len(_missing_years)} year(s): "
+          f"{', '.join(str(y) for y in _missing_years)} -- these years are omitted "
+          "from the figure, which will NOT match the published version.")
+
 for year in YEARS:
     cache_path = os.path.join(IPEDS_CACHE, f'C{year}_A.csv')
     if not os.path.exists(cache_path):

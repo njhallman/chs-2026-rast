@@ -31,3 +31,6 @@ diffs/
 
 # Diagnostic (non-paper) outputs
 diagnostics/
+
+# run_all.py freshness manifest
+.run_manifest.json

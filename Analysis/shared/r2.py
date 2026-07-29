@@ -153,10 +153,13 @@ def ensure_data_file(subpath):
 
 
 def upload_to_r2(subpath):
-    """Upload a local data file to object storage (authors' archive only).
+    """Upload a local data file to object storage (archival convenience).
 
-    No-op with a warning when credentials are not configured, so that pipeline
-    scripts run fine for reproducers who have no archive to write to.
+    Uploads only when credentials are configured AND R2_ALLOW_UPLOAD is set.
+    The pipeline scripts call this after rebuilding a dataset, so without the
+    second gate merely having read credentials in the environment would cause a
+    rerun to overwrite the archived copy of the data the paper was built from.
+    Read access should never imply write access.
 
     Args:
         subpath: Path relative to Analysis/Data/, e.g.
@@ -166,6 +169,11 @@ def upload_to_r2(subpath):
 
     if not remote_configured():
         print(f"  Skipping upload of {subpath} (object storage not configured)")
+        return
+
+    if not os.environ.get("R2_ALLOW_UPLOAD"):
+        print(f"  Skipping upload of {subpath} "
+              "(set R2_ALLOW_UPLOAD=1 to write to object storage)")
         return
 
     local_path = os.path.join(data_dir, subpath)

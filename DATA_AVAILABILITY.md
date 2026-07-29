@@ -58,12 +58,35 @@ These live in `Analysis/Data/public/` and are either public-domain or small hand
 | `census/cbsa_revelio_metro.csv` | CBSA code → Revelio `metro_area` mapping, hand-reviewed by the authors. Not regenerable by any script. |
 | `interim/at_revelio_firm_mapping.json` | *Accounting Today* Top 100 firm → Revelio `company_raw` mapping, with PCAOB annual-inspection status. Hand-curated by the authors. |
 | `proxy/proxy_dei_keywords_v2.csv` | DEI and gender keyword counts per DEF 14A filing, computed by `08_fetch_proxy_keywords.py` from public SEC filings. |
-| `edgar/company_locations.csv` | Registrant business city, state, and ZIP by CIK (latest snapshot per filer), from EDGAR company metadata. Public domain. |
-| `ipeds/C{year}_A.csv` | IPEDS Completions files, as downloaded by `05_download_ipeds.py`. Public domain. |
+| `edgar/company_locations.csv` | Registrant business city, state, and ZIP by CIK, from the SEC submissions API. Public domain. See the caveat below. |
 
 The last two exist so that no reproducer needs the authors' local mirror of SEC filings.
 `08_fetch_proxy_keywords.py` documents how the keyword counts were produced and requires
 `--edgar-archive` pointing at such a mirror; you do not need to run it.
+
+**IPEDS is deliberately not committed.** The Completions files are public domain but total
+~900 MB. `Analysis/pipeline/05_download_ipeds.py` fetches them straight from NCES with no
+authentication, into `Analysis/Data/raw/ipeds/`. Run it before `supply_vs_entry.py`.
+
+### Caveat on `edgar/company_locations.csv`
+
+This file maps each Big 4 audit client CIK to a business address, which is how `07` assigns
+clients to CBSAs for the Table 4 mechanism measures. It is built by
+`tools/build_company_locations.py` from the SEC submissions API
+(`https://data.sec.gov/submissions/CIK##########.json`), which reports each filer's **current**
+address rather than its address in the filing year. Companies that have relocated are therefore
+assigned to their present CBSA.
+
+The published measure was built from a point-in-time EDGAR snapshot. Table 4 rebuilt from this
+file may therefore differ slightly from the published version. For an exact reproduction, use a
+point-in-time archive instead:
+
+```bash
+python tools/fetch_public_inputs.py --extract-locations /path/to/edgar.db
+```
+
+The committed file is the SEC-sourced one, so that the package is reproducible by anyone without
+access to a private archive.
 
 Big 4 firm identification is not a data file — the `company_raw` → firm mapping lives in
 `Analysis/shared/firm_mappings.py`, and the appendix table listing it is generated from that

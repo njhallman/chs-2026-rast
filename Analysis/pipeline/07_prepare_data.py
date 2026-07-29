@@ -903,11 +903,28 @@ def main():
     gc.collect()
 
     # ── Save sample counts ────────────────────────────────────────────────
+    # These counts are the sole input to Table 1 (sampleDesign.tex), which never
+    # reads a panel. Writing them only after the panels are on disk, and checking
+    # they describe THOSE panels, keeps Table 1 from silently disagreeing with the
+    # N reported by every other table.
     all_counts = {**aud_counts, **fs_counts}
+
+    panel_rows = len(pd.read_feather(os.path.join(data_dir, stata_path),
+                                     columns=['female']))
+    if all_counts.get('uay2') != panel_rows:
+        raise RuntimeError(
+            f"Sample counts disagree with the panel just written: counts say "
+            f"uay2={all_counts.get('uay2'):,} primary-sample employee-years but "
+            f"{stata_path} has {panel_rows:,} rows. Table 1 would contradict the "
+            "other tables. This means the counts and the panel came from "
+            "different runs -- do not mix vintages."
+        )
+
     counts_path = "processed/sample_counts.json"
     with open(os.path.join(data_dir, counts_path), 'w') as f:
         json.dump(all_counts, f, indent=2)
-    print(f"\nSaved {len(all_counts)} sample counts to {counts_path}")
+    print(f"\nSaved {len(all_counts)} sample counts to {counts_path} "
+          f"(cross-checked against {panel_rows:,} panel rows)")
 
     elapsed = (time.time() - start_time) / 60
     print(f"\nDone. Total time: {elapsed:.1f} minutes")

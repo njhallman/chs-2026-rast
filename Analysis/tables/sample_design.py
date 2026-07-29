@@ -3,18 +3,26 @@ Produces: LaTeX/Tables/sampleDesign.tex
 Sample construction table showing observation counts at each filtering step.
 Uses interim screening counts (from 06_build_interim.py) and processed
 sample counts (from 07_prepare_data.py).
+
+This table is assembled purely from those two JSON count files -- it never reads
+a panel. So it reproduces only when the count files were written by the same
+pipeline run that produced the panels the other tables are estimated on. If this
+table's totals disagree with the N reported in summaryStats.tex, the count files
+and the panels are from different runs; rebuild both with
+`06_build_interim.py` followed by `07_prepare_data.py` rather than mixing
+vintages.
 """
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
 import json
-from shared.paths import data_dir, tables_dir
+from shared.paths import tables_dir
 from shared.r2 import ensure_data_file
 
 print("Creating sampleDesign.tex")
 
 # Interim screening counts (from 06_build_interim.py)
-with open(os.path.join(data_dir, 'interim', 'interim_screening_counts.json')) as f:
+with open(ensure_data_file("interim/interim_screening_counts.json")) as f:
     ic = json.load(f)
 
 # Processed sample counts (from 07_prepare_data.py)

@@ -24,7 +24,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'Analysis'))
 
 from shared.paths import data_dir            # noqa: E402
-from shared.r2 import _download, _get_s3_client, _R2_BUCKET, remote_configured   # noqa: E402
+from shared.r2 import _download, remote_configured   # noqa: E402
 
 # (archive subpath, destination under Analysis/Data/public/, provenance note)
 PUBLIC_INPUTS = [
@@ -59,11 +59,10 @@ PUBLIC_INPUTS = [
     ),
 ]
 
-# IPEDS completions CSVs (one per survey year) are downloaded by pipeline/05.
-# Fetched as a prefix because the file set depends on the years covered.
-# NCES IPEDS is public domain.
-IPEDS_ARCHIVE_PREFIX = 'Data/raw/ipeds/'
-IPEDS_DEST_PREFIX = 'ipeds/'
+# NOTE on IPEDS: the completions CSVs are public domain but total ~900 MB, far
+# too much to commit. They are not part of the public/ set. They live in
+# Analysis/Data/raw/ipeds/ (gitignored) and are downloaded straight from NCES by
+# Analysis/pipeline/05_download_ipeds.py, which needs no authentication.
 
 
 def public_dir():
@@ -71,7 +70,8 @@ def public_dir():
 
 
 def do_list():
-    print(f"{len(PUBLIC_INPUTS)} public inputs (plus the IPEDS completions CSVs):\n")
+    print(f"{len(PUBLIC_INPUTS)} committed public inputs "
+          "(IPEDS is excluded -- see note in this file):\n")
     for src, dst, note in PUBLIC_INPUTS:
         present = os.path.exists(os.path.join(public_dir(), dst))
         print(f"  [{'x' if present else ' '}] {dst}")
@@ -98,25 +98,8 @@ def do_fetch():
         except Exception as e:
             print(f"  FAILED {dst}: {e}")
 
-    # IPEDS: fetch every object under the archive prefix
-    s3 = _get_s3_client()
-    paginator = s3.get_paginator('list_objects_v2')
-    for page in paginator.paginate(Bucket=_R2_BUCKET, Prefix=IPEDS_ARCHIVE_PREFIX):
-        for obj in page.get('Contents', []):
-            name = obj['Key'][len(IPEDS_ARCHIVE_PREFIX):]
-            if not name:
-                continue
-            dest_path = os.path.join(public_dir(), IPEDS_DEST_PREFIX, name)
-            if os.path.exists(dest_path):
-                print(f"  SKIP (exists): {IPEDS_DEST_PREFIX}{name}")
-                continue
-            os.makedirs(os.path.dirname(dest_path), exist_ok=True)
-            try:
-                size_mb = _download(obj['Key'], dest_path)
-                print(f"  Fetched {IPEDS_DEST_PREFIX}{name} ({size_mb:.1f} MB)")
-            except Exception as e:
-                print(f"  FAILED {IPEDS_DEST_PREFIX}{name}: {e}")
-
+    print("\nIPEDS is not fetched here (~900 MB, not committed): run "
+          "Analysis/pipeline/05_download_ipeds.py to get it from NCES.")
     print("\nDone. Review each file before committing, then:")
     print("  git add Analysis/Data/public && git commit")
 

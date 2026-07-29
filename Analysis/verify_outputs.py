@@ -21,6 +21,13 @@ So figures are reported in three states rather than forced into pass/fail:
     REVIEW  differs; metrics and a diff image are produced for visual sign-off
     FAIL    differs grossly (different size, or a large share of pixels changed)
 
+A fourth state applies to both tables and figures:
+
+    STALE   the file matches, but run_all.py did not regenerate it in the last
+            run -- so what is being compared is a leftover copy, not output. A
+            failed script leaves the previous file in place, which would
+            otherwise compare as identical and read as a pass.
+
 REVIEW is not a pass. The run exits non-zero so that any figure which is not
 byte-identical gets looked at, and `diffs/` shows exactly where the two
 renderings disagree.
@@ -37,11 +44,13 @@ Exit status is 0 only if every table is identical and every figure is either
 identical or an inspected-and-accepted REVIEW.
 """
 import argparse
+import json
 import os
 import sys
 
 _dir = os.path.dirname(os.path.abspath(__file__))
 _repo = os.path.dirname(_dir)
+MANIFEST_PATH = os.path.join(_repo, '.run_manifest.json')
 
 REFERENCE_TABLES = os.path.join(_repo, 'reference', 'tables')
 REFERENCE_FIGURES = os.path.join(_repo, 'reference', 'figures')
@@ -57,7 +66,22 @@ PIXEL_CHANGE_THRESHOLD = 8
 # only; a redrawn series, axis, or panel changes far more of the canvas.
 GROSS_CHANGE_PCT = 2.0
 
-PASS, FAIL, REVIEW, MISSING = 'PASS', 'FAIL', 'REVIEW', 'MISSING'
+PASS, FAIL, REVIEW, MISSING, STALE = 'PASS', 'FAIL', 'REVIEW', 'MISSING', 'STALE'
+
+
+def load_manifest():
+    """Return run_all.py's record of what it regenerated, or None if absent.
+
+    Comparing files on disk is not enough on its own: a script that failed to
+    run leaves the previous copy in place, which then compares as identical.
+    """
+    if not os.path.exists(MANIFEST_PATH):
+        return None
+    try:
+        with open(MANIFEST_PATH) as f:
+            return (json.load(f) or {}).get('outputs') or {}
+    except Exception:
+        return None
 
 
 def _normalise(text):
@@ -65,8 +89,11 @@ def _normalise(text):
     return '\n'.join(line.rstrip() for line in text.splitlines()).strip() + '\n'
 
 
-def compare_table(name):
+def compare_table(name, manifest=None):
     """Compare one .tex file. Returns (status, detail)."""
+    stale = _staleness(name, manifest)
+    if stale:
+        return stale
     ref_path = os.path.join(REFERENCE_TABLES, name)
     cur_path = os.path.join(CURRENT_TABLES, name)
 
@@ -94,12 +121,27 @@ def compare_table(name):
     return FAIL, f'{n_diff} line(s) differ, first at line {first}'
 
 
-def compare_figure(name, diff_dir=None):
+def _staleness(name, manifest):
+    """Return a STALE verdict when the last run did not regenerate this output."""
+    if manifest is None:
+        return None
+    entry = manifest.get(name)
+    if entry is None:
+        return STALE, 'not regenerated in the last run_all.py run'
+    if not entry.get('regenerated'):
+        return STALE, 'its script FAILED in the last run_all.py run'
+    return None
+
+
+def compare_figure(name, diff_dir=None, manifest=None):
     """Compare one .png file. Returns (status, detail).
 
     PASS only when byte-identical. Anything else is REVIEW (with a diff image
     written) or, if a large share of the canvas changed, FAIL.
     """
+    stale = _staleness(name, manifest)
+    if stale:
+        return stale
     ref_path = os.path.join(REFERENCE_FIGURES, name)
     cur_path = os.path.join(CURRENT_FIGURES, name)
 
@@ -158,10 +200,19 @@ def main():
                              'are not byte-identical (default: diffs/)')
     parser.add_argument('--accept-review', action='store_true',
                         help='Treat REVIEW figures as passing, once inspected')
+    parser.add_argument('--ignore-manifest', action='store_true',
+                        help='Compare files on disk without checking whether the '
+                             'last run_all.py run actually regenerated them')
     args = parser.parse_args()
 
     do_tables = not args.figures
     do_figures = not args.tables
+
+    manifest = None if args.ignore_manifest else load_manifest()
+    if manifest is None and not args.ignore_manifest:
+        print("\nNOTE: no .run_manifest.json found, so freshness is unverified -- "
+              "these files may be leftovers rather than regenerated output.\n"
+              "      Run `python Analysis/run_all.py` first.")
 
     results = []
 
@@ -170,7 +221,7 @@ def main():
         print(f"\nTables ({len(names)})")
         print("-" * 72)
         for name in names:
-            status, detail = compare_table(name)
+            status, detail = compare_table(name, manifest)
             results.append((status, name))
             print(f"  {status:<8} {name:<32} {detail}")
 
@@ -179,13 +230,13 @@ def main():
         print(f"\nFigures ({len(names)})")
         print("-" * 72)
         for name in names:
-            status, detail = compare_figure(name, args.diff_dir)
+            status, detail = compare_figure(name, args.diff_dir, manifest)
             results.append((status, name))
             print(f"  {status:<8} {name:<32} {detail}")
 
     n_pass = sum(1 for s, _ in results if s == PASS)
     review = [n for s, n in results if s == REVIEW]
-    bad = [n for s, n in results if s in (FAIL, MISSING)]
+    bad = [n for s, n in results if s in (FAIL, MISSING, STALE)]
 
     print("\n" + "=" * 72)
     print(f"  {n_pass}/{len(results)} outputs are identical to the published version")

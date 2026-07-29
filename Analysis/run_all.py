@@ -21,12 +21,17 @@ Each script can also be run individually, e.g.:
 Afterwards, compare against the published outputs with:
     python Analysis/verify_outputs.py
 """
-import sys, os, subprocess, argparse, time
+import sys, os, subprocess, argparse, time, json
 
 _dir = os.path.dirname(os.path.abspath(__file__))
 _repo = os.path.dirname(_dir)
 _tables_dir = os.path.join(_repo, 'LaTeX', 'Tables')
 _figures_dir = os.path.join(_repo, 'LaTeX', 'Figures')
+
+# Records which outputs this run actually regenerated, so verify_outputs.py can
+# tell "regenerated and identical" from "left over from a previous checkout".
+# Without it, a script that fails to run still shows as passing verification.
+MANIFEST_PATH = os.path.join(_repo, '.run_manifest.json')
 
 
 def _outputs_for(names):
@@ -133,12 +138,31 @@ def main():
         scripts = TABLE_SCRIPTS + FIGURE_SCRIPTS + IN_TEXT_SCRIPTS
 
     failures = []
+    regenerated = {}
     t_start = time.time()
 
     for script_path, outputs in scripts:
         ok, message = run(script_path, outputs)
         if not ok:
             failures.append(message)
+        for name in outputs:
+            regenerated[name] = ok
+
+    # Merge into any existing manifest so partial runs (--tables, --figures)
+    # accumulate rather than discarding what the other pass established.
+    manifest = {'outputs': {}}
+    if os.path.exists(MANIFEST_PATH):
+        try:
+            with open(MANIFEST_PATH) as f:
+                manifest = json.load(f)
+        except Exception:
+            manifest = {'outputs': {}}
+    manifest.setdefault('outputs', {})
+    for name, ok in regenerated.items():
+        manifest['outputs'][name] = {'regenerated': ok, 'at': time.time()}
+    manifest['updated'] = time.time()
+    with open(MANIFEST_PATH, 'w') as f:
+        json.dump(manifest, f, indent=2, sort_keys=True)
 
     total = time.time() - t_start
     print(f"\n{'='*60}")

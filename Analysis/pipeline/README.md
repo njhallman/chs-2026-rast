@@ -17,7 +17,16 @@ Numbered scripts that download, process, and prepare all data for the paper. Eac
 
 ## Data Sources for 06_build_interim.py
 
-Script 06 prefers the **bulk partition files** (`revelioFsPosUsr_1-4_of_4.feather`) from the original January 2025 Revelio download. These are the data that produced the published tables (145,573 users, 713,614 person-years). If bulk files are not present, it falls back to per-role files from `01_download_revelio.py`.
+Script 06 builds two datasets from two different sources:
+
+- **Big 4 audit panel** from `revelioB4Aud.feather` (Big 4 audit/auditor positions pre-extracted
+  from the January 2025 Revelio download) plus `revelioB4Edu.feather` for education. These are the
+  data behind the published tables.
+- **Other financial services panel** from the per-role files
+  (`revelioPosUsr_role_*.feather`, all 58 of them, consulting roles excluded) plus
+  `revelioEdu_role_combined.feather`.
+
+Both must be present; there is no fallback between them.
 
 ## Dependencies
 
@@ -28,7 +37,8 @@ Scripts 01-03 require a WRDS username: pass `--wrds-username YOUR_ID` or set
 promptly, and do not retry in a loop, as repeated failures can lock the account.
 
 Scripts 06-08 must run in order:
-- `06` requires raw Revelio files (bulk partitions or per-role files from `01`)
+- `06` requires `revelioB4Aud.feather`, `revelioB4Edu.feather`, the per-role position files
+  from `01`, and `revelioEdu_role_combined.feather`
 - `07` requires interim files from `06`, plus BoardEx, Audit Analytics, and
   `public/edgar/company_locations.csv` for the mechanism variables. It FAILS if an
   input needed for a published table is missing; `--allow-missing` downgrades that
@@ -62,8 +72,9 @@ python Analysis/run_all.py
 Analysis/Data/
 ├── raw/
 │   ├── revelio/
-│   │   ├── revelioFsPosUsr_{1-4}_of_4.feather   Bulk position data (Jan 2025, preferred by 06)
-│   │   ├── revelioPosUsr_role_*.feather          Per-role position files (from 01, fallback)
+│   │   ├── revelioB4Aud.feather                  Big 4 audit positions (Jan 2025) -- used by 06
+│   │   ├── revelioB4Edu.feather                  Big 4 education (Jan 2025) -- used by 06
+│   │   ├── revelioPosUsr_role_*.feather          Per-role position files (from 01) -- used by 06
 │   │   ├── revelioEdu_role_combined.feather       Education data
 │   │   └── revelio_b4_users_all_positions.feather B4 auditor complete career histories
 │   ├── boardex/          3 board composition feather files
@@ -80,3 +91,10 @@ Analysis/Data/
     ├── revOtherFsExp.feather     Exploration Other FS panel (from 07)
     └── sample_counts.json        Filtering audit trail (from 07)
 ```
+
+## A note on writing back to object storage
+
+Scripts 02-04, 06, and 07 call `upload_to_r2()` after producing a dataset, which archives it to
+the authors' bucket. That upload is skipped unless **both** object-storage credentials and
+`R2_ALLOW_UPLOAD=1` are set, so having read credentials in your environment cannot cause a rerun
+to overwrite the archived copies. Reproducers never need it.
