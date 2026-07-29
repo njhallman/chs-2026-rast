@@ -22,6 +22,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'
 import numpy as np
 import pandas as pd
 from glob import glob
+import pyarrow as pa
 
 from shared.paths import data_dir
 from shared.r2 import ensure_data_file, upload_to_r2
@@ -67,13 +68,23 @@ def load_all_positions():
         if role in CONSULTING_ROLES:
             print(f"  {role}: SKIPPED (consulting role)")
             continue
-        df = pd.read_feather(f)
+        # Read only the columns that survive downstream. build_other_fs() drops
+        # DROP_COLUMNS anyway, but doing it here means the wide free-text columns
+        # (description, profile_summary, profile_title, fullname) are never
+        # materialised: loading all 54 role files in full needs more than 16 GB
+        # of RAM and gets OOM-killed. Excluding them at read time is
+        # output-identical, because nothing between here and that drop reads them.
+        with pa.memory_map(f, 'rb') as src:      # schema only, no data read
+            names = pa.ipc.open_file(src).schema.names
+        keep = [c for c in names if c not in DROP_COLUMNS]
+        df = pd.read_feather(f, columns=keep)
         if 'role_k1500_v2' in df.columns and 'role_k1500' not in df.columns:
             df = df.rename(columns={'role_k1500_v2': 'role_k1500'})
         dfs.append(df)
         print(f"  {role}: {len(df):,} rows")
 
     combined = pd.concat(dfs, ignore_index=True)
+    dfs.clear()
     del dfs
     gc.collect()
 
@@ -147,10 +158,16 @@ def load_education(user_ids=None, source='combined'):
 def build_b4_audit(edu):
     """Build the Big 4 auditor interim dataset with screens and rank assignment.
 
-    Loads revelioB4Aud.feather (Big 4 audit/auditor positions extracted from
-    the bulk partition files), applies data screens (bad dates, inter-firm
-    movers, missing education, interns), assigns ranks from title_raw, and
-    flags implausible rank progressions.
+    Loads revelioB4Aud.feather (Big 4 audit/auditor positions from the January
+    2025 Revelio extract), applies data screens (bad dates, missing education,
+    interns), assigns ranks from title_raw, and flags implausible rank
+    progressions.
+
+    Note: no inter-firm mover screen is applied. The primary sample retains
+    auditors who move between Big 4 firms, and the screening counts written here
+    have no mover step -- matching the published Table 1. An earlier version of
+    this script did drop movers; a count file containing `mover_drop_users` keys
+    is from that version and is NOT consistent with the published sample.
     """
     print("\n" + "─" * 60)
     print("Building revB4Aud (Big 4 auditor positions)")
